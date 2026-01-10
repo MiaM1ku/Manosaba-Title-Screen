@@ -133,8 +133,7 @@ object SplashOverlayRenderer {
                 brandLogo?.let { logo ->
                     Image(
                         bitmap = logo,
-                        contentDescription = "Brand Logo",
-                        modifier = Modifier.height(200.dp)
+                        contentDescription = "Brand Logo"
                     )
                 }
 
@@ -142,7 +141,7 @@ object SplashOverlayRenderer {
                     Image(
                         bitmap = logo,
                         contentDescription = "Company Logo",
-                        modifier = Modifier.height(200.dp)
+                        modifier = Modifier.offset(y = 32.dp)
                     )
                 }
             }
