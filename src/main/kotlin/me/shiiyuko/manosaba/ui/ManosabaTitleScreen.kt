@@ -9,21 +9,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.asComposeRenderEffect
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.toComposeImageBitmap
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -31,14 +20,16 @@ import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
-import net.minecraft.SharedConstants
+import me.shiiyuko.manosaba.Manosaba
 import me.shiiyuko.manosaba.utils.SpriteAtlas
 import me.shiiyuko.manosaba.utils.UnitySpriteParser
+import net.minecraft.SharedConstants
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen
 import net.minecraft.client.gui.screen.option.OptionsScreen
 import net.minecraft.client.gui.screen.world.CreateWorldScreen
 import net.minecraft.client.gui.screen.world.SelectWorldScreen
+import net.minecraft.client.sound.PositionedSoundInstance
 import net.minecraft.text.Text
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.Image
@@ -78,6 +69,16 @@ class ManosabaTitleScreen : ComposeScreen(Text.literal("Manosaba Title Screen"))
         super.close()
     }
 
+    private fun playMusic() {
+        val client = MinecraftClient.getInstance()
+
+        client.soundManager.stopAll()
+        client.musicTracker.stop()
+
+        val sound = PositionedSoundInstance.music(Manosaba.TITLE_MUSIC.value())
+        client.soundManager.play(sound)
+    }
+
     private fun loadAtlasResources() = runCatching {
         val image = UnitySpriteParser.loadAtlasImageFromResources("/assets/UI_Title.png") ?: return@runCatching
         val data = UnitySpriteParser.loadAtlasDataFromResources("/assets/UI_Title.json") ?: return@runCatching
@@ -115,6 +116,7 @@ class ManosabaTitleScreen : ComposeScreen(Text.literal("Manosaba Title Screen"))
         val uiAlpha = remember { Animatable(0f) }
 
         LaunchedEffect(Unit) {
+            playMusic()
             backgroundAnimProgress.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(durationMillis = 2500, easing = FastOutSlowInEasing)
